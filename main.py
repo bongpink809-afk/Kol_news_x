@@ -128,9 +128,12 @@ def fetch_last_tweets(username):
 
     status = payload.get("status")
     if status is not None and status != "success":
-        raise RuntimeError(f"TwitterAPI.io returned status={status!r} for @{username}: {payload.get('message')}")
+        raise RuntimeError(
+            f"TwitterAPI.io returned status={status!r} for @{username}: "
+            f"{payload.get('message') or payload.get('msg')}"
+        )
 
-    tweets = payload.get("tweets")
+    tweets = (payload.get("data") or {}).get("tweets")
     if tweets is None:
         logger.warning(
             "Unexpected response shape for @%s (no 'tweets' key). Full payload: %s",
@@ -159,6 +162,16 @@ def send_telegram_message(niche, username, tweet_text, tweet_url, message_thread
         data["message_thread_id"] = message_thread_id
 
     response = requests.post(url, data=data, timeout=30)
+    if response.status_code == 429:
+        retry_after = response.json().get("parameters", {}).get("retry_after", 1)
+        logger.warning(
+            "Telegram rate-limited sendMessage (429) for @%s, retrying in %d second(s)...",
+            username,
+            retry_after,
+        )
+        time.sleep(retry_after + 1)
+        response = requests.post(url, data=data, timeout=30)
+
     if not response.ok:
         raise RuntimeError(f"Telegram sendMessage failed ({response.status_code}): {response.text}")
 
