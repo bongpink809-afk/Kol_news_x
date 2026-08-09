@@ -1,10 +1,10 @@
 {
   "hot": {
     "interval_minutes": 60,
-    "niches": ["Tin tức lớn"]
+    "niches": ["Tin tức lớn", "Onchain"]
   },
   "daily": {
     "interval_minutes": 1440,
-    "niches": ["Tin các chain lớn", "Onchain", "Onchain cá nhân", "Sàn", "Job Web3", "Tin tức nhanh", "Research cá nhân", "Airdrop / Hidden Gems", "Deep DeFi Research"]
+    "niches": ["Tin các chain lớn", "Onchain cá nhân", "Sàn", "Job Web3", "Tin tức nhanh", "Research cá nhân", "Airdrop / Hidden Gems", "Deep DeFi Research"]
   }
 }
